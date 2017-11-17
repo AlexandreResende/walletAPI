@@ -5,6 +5,7 @@ const expressSession = require('express-session');
 const helmet = require('helmet');
 
 const userRouter = require('./api/routes/user.routes');
+const cardRouter = require('./api/routes/card.routes');
 const walletRouter = require('./api/routes/wallet.routes');
 
 const app = express();
@@ -16,4 +17,5 @@ app
   .use(bodyParser.json())
   .use('/', userRouter)
   .use('/wallet', walletRouter)
+  .use('/:walletid/cards', cardRouter)
   .listen(port, () => console.log(`Server running on port ${port}`));
