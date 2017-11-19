@@ -16,6 +16,7 @@ class UserDAO {
         res.status(201).send({message: 'User signed up successfully'});
       })
         .catch((err) => {
+          console.log(err);
         res.status(500).send({error: 'An error occurred'});
       });
   }
