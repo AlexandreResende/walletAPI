@@ -12,3 +12,7 @@ module.exports.signup = (req, res) => {
 module.exports.edituser = (req, res) => {
   const user = userModel().edituser(req, res, req.body);
 }
+
+module.exports.deleteuser = (req, res) => {
+  const user = userModel().deleteuser(req, res);
+}

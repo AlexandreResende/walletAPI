@@ -32,7 +32,7 @@ class UserDAO {
         if (result) {
           res.status(200).send({message: 'User data is valid'});
         } else {
-          throw new Error();
+          throw new Error('User not found');
         }
       })
       .catch((err) => {
@@ -43,7 +43,7 @@ class UserDAO {
   edituser(req, res, userUpdateInfo) {
     const selector = {
       where: {
-        id: req.params.id
+        id: req.params.userid
       }
     };
     models.user.update(
@@ -52,6 +52,20 @@ class UserDAO {
     )
     .then((result) => {
       res.status(200).send({message: 'User information updated'});
+    })
+    .catch((err) => {
+      res.status(500).send({error: 'An error occurred'});
+    });
+  }
+
+  deleteuser(req, res) {
+    models.user.destroy({
+      where: {
+        id: req.params.userid
+      }
+    })
+    .then((result) => {
+      res.status(200).send({message: 'User deleted successfully'});
     })
     .catch((err) => {
       res.status(500).send({error: 'An error occurred'});
