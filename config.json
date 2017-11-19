@@ -1,0 +1,14 @@
+{
+  "development": {
+    "database": "postgres",
+    "username": "postgres",
+    "password": "postgres",
+    "dialect": "postgresql"
+  },
+  "staging": {
+    "use_env_variable": "DATABASE_URL"
+  },
+  "production": {
+    "use_env_variable": "DATABASE_URL"
+  }
+}
