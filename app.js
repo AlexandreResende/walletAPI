@@ -1,7 +1,6 @@
 
 const express = require('express');
 const bodyParser = require('body-parser');
-const expressSession = require('express-session');
 const helmet = require('helmet');
 
 const userRouter = require('./api/routes/user.routes');
