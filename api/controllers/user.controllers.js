@@ -10,5 +10,5 @@ module.exports.signup = (req, res) => {
 }
 
 module.exports.edituser = (req, res) => {
-  res.status(200).json({message: 'Editing user'});
+  const user = userModel().edituser(req, res, req.body);
 }
