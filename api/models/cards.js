@@ -5,12 +5,14 @@ module.exports = (sequelize, DataTypes) => {
     ownername: DataTypes.STRING,
     cvv: DataTypes.STRING,
     limit: DataTypes.DOUBLE,
+    duedate: DataTypes.INTEGER,
+    expirationdate: DataTypes.STRING,
     walletid: DataTypes.INTEGER,
     purchased: DataTypes.DOUBLE
   }, {
     classMethods: {
       associate: function(models) {
-        // associations can be defined here
+        cards.belongsTo(models.wallet, { foreignKey: 'walletid', foreignKeyConstraint: true });
       }
     }
   });

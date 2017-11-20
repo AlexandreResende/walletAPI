@@ -9,6 +9,7 @@ module.exports = (sequelize, DataTypes) => {
     classMethods: {
       associate: function(models) {
         wallet.belongsTo(models.user, { foreignKey: 'userid', foreignKeyConstraint: true });
+        wallet.hasMany(models.cards);
       }
     }
   });
