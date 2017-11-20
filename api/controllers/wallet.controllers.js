@@ -1,16 +1,26 @@
 
+const walletModel = require('../models-persistence/wallet.model');
+
 module.exports.getwallets = (req, res) => {
-  res.status(200).json({message: 'Getting wallets'});
+  walletModel().getwallets(req, res);
 };
 
 module.exports.addwallet = (req, res) => {
-  res.status(200).json({message: 'Adding wallet'});
+  walletModel().addwallet(req, res, req.body);
 };
 
 module.exports.editwallet = (req, res) => {
-  res.status(200).json({message: 'Editing wallet'});
+  walletModel().editwallet(req, res, req.body);
 };
 
 module.exports.deletewallet = (req, res) => {
-  res.status(200).json({message: 'Delete wallet'});
+  walletModel().deletewallet(req, res);
+};
+
+module.exports.getlimit = (req, res) => {
+  walletModel().getlimit(req, res);
+};
+
+module.exports.editlimit = (req, res) => {
+  walletModel().editlimit(req, res, req.body);
 };

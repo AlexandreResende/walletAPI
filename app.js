@@ -14,7 +14,7 @@ app
   .use(helmet())
   .use(bodyParser.urlencoded({ extended: true}))
   .use(bodyParser.json())
-  .use('/', userRouter)
-  .use('/wallet', walletRouter)
-  .use('/:walletid/cards', cardRouter)
+  .use(userRouter)
+  .use(walletRouter)
+  .use(cardRouter)
   .listen(port, () => console.log(`Server running on port ${port}`));
