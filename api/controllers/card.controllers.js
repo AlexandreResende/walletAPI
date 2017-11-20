@@ -1,6 +1,10 @@
 
 const cardModel = require('../models-persistence/card.model');
 
+module.exports.getcards = (req, res) => {
+  cardModel().addcard(req, res);
+};
+
 module.exports.addcard = (req, res) => {
   cardModel().addcard(req, res, req.body);
 };
