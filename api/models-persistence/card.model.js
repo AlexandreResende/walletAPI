@@ -4,6 +4,18 @@ class Card {
 
   constructor() {}
 
+  getcards() {
+    models.cards.findAll({
+      walletid: req.params.walletid
+    })
+    .then((result) => {
+      res.status(200).json({ result });
+    })
+    .catch((err) => {
+      res.status(500).json({ error: 'An error occurred when finding a used card' });
+    });
+  }
+
   addcard(req, res, cardInfo) {
     const cardNumber = {
       number: cardInfo.number

@@ -88,6 +88,10 @@
 
   > `card`: <br />
   >>`/:userid/:walletid/cards` <br />
+  **Description: Get all the cards of a wallet** <br />
+  **Method: GET** <br />
+
+  >>`/:userid/:walletid/cards` <br />
   **Description: Add a card to a wallet** <br />
   **Method: POST** <br />
   **Input Data:**
