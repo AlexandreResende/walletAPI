@@ -5,12 +5,10 @@ const router = express.Router();
 
 const cardController = require('../controllers/card.controllers');
 
-router.get('/', cardController.getcards);
+router.post('/:userid/:walletid/cards', cardController.addcard);
 
-router.post('/', cardController.addcard);
+router.put('/:userid/:walletid/:cardid', cardController.editcard);
 
-router.put('/:cardid', cardController.editcard);
-
-router.delete('/:cardid', cardController.deletecard);
+router.delete('/:userid/:walletid/:cardid', cardController.deletecard);
 
 module.exports = router;

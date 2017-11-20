@@ -1,16 +1,14 @@
 
-module.exports.getcards = (req, res) => {
-  res.status(200).json({message: 'Getting cards'});
-};
+const cardModel = require('../models-persistence/card.model');
 
 module.exports.addcard = (req, res) => {
-  res.status(200).json({message: 'Adding card'});
+  cardModel().addcard(req, res, req.body);
 };
 
 module.exports.editcard = (req, res) => {
-  res.status(200).json({message: 'Editing card'});
+  cardModel().editcard(req, res, req.body);
 };
 
 module.exports.deletecard = (req, res) => {
-  res.status(200).json({message: 'Deleting card'});
+  cardModel().deletecard(req, res);
 };
