@@ -47,7 +47,7 @@ class UserDAO {
       }
     };
     models.user.update(
-      userUpdateInfo,
+      userUpdateInfo, 
       selector
     )
     .then((result) => {
