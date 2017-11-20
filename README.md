@@ -96,7 +96,9 @@
         "number": "1111111111111111",
         "ownername": "Dimitri Matri",
         "cvv": 123,
-        "limit": 5000
+        "limit": 5000,
+        "duedate": 5,
+        "expirationdate": "02/2020"
       }
 
   >>`/:userid/:walletid/:cardid` <br />

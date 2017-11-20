@@ -20,6 +20,12 @@ module.exports = {
       limit: {
         type: Sequelize.DOUBLE
       },
+      duedate: {
+        type: Sequelize.INTEGER
+      },
+      expirationdate: {
+        type: Sequelize.STRING
+      },
       walletid: {
         type: Sequelize.INTEGER
       },
