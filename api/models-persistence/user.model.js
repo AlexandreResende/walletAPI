@@ -6,18 +6,46 @@ class UserDAO {
   constructor() {}
 
   signupUser(req, res, userInputData) {
-    models.user.create({
-      name: userInputData.name,
-      email: userInputData.email,
-      password: userInputData.password
-    })
-      .then((result) => {
-        //console.log(result.dataValues);
-        res.status(201).send({message: 'User signed up successfully'});
+    const email = userInputData.email;
+
+    const isEmailRegistered = new Promise((resolve, reject) => {
+      models.user.find({
+        where: {
+          email
+        }
       })
+        .then((result) => {
+          if (result === null) {
+            resolve();
+          }
+          reject({error: 'Email already registered'});
+        })
         .catch((err) => {
           console.log(err);
-        res.status(500).send({error: 'An error occurred'});
+          res.status(500).send({ err });
+        });
+    });
+
+    Promise
+      .all([isEmailRegistered])
+      .then((result) => {
+        models.user.create({
+          name: userInputData.name,
+          email: userInputData.email,
+          password: userInputData.password
+        })
+          .then((result) => {
+            //console.log(result.dataValues);
+            res.status(201).send({message: 'User signed up successfully'});
+          })
+            .catch((err) => {
+              console.log(err);
+              res.status(500).send({ err });
+          });
+      })
+      .catch((err) => {
+        console.log(err);
+        res.status(500).send({ err });
       });
   }
 
@@ -32,15 +60,16 @@ class UserDAO {
         if (result) {
           res.status(200).send({message: 'User data is valid'});
         } else {
-          throw new Error('User not found');
+          res.status(500).send({ err: 'User not found' });
         }
       })
       .catch((err) => {
-        res.status(500).send({error: 'An error occurred'});
+        console.log(err);
+        res.status(500).send({ err });
       });
   };
 
-  edituser(req, res, userUpdateInfo) {
+  editUser(req, res, userUpdateInfo) {
     const selector = {
       where: {
         id: req.params.userid
@@ -54,22 +83,46 @@ class UserDAO {
       res.status(200).send({message: 'User information updated'});
     })
     .catch((err) => {
-      res.status(500).send({error: 'An error occurred'});
+      res.status(500).send({ err });
     });
   }
 
-  deleteuser(req, res) {
-    models.user.destroy({
-      where: {
-        id: req.params.userid
-      }
-    })
-    .then((result) => {
-      res.status(200).send({message: 'User deleted successfully'});
-    })
-    .catch((err) => {
-      res.status(500).send({error: 'An error occurred'});
+  deleteUser(req, res) {
+    const hasUserWallets = new Promise((resolve, reject) => {
+      models.wallet.find({
+        where: {
+          userid: req.params.userid
+        }
+      })
+        .then((result) => {
+          if (result){
+            reject('You need to delete your wallets before');
+          }
+          resolve();
+        })
+        .catch((err) => {
+          res.status(500).send({ err });
+        });
     });
+
+    Promise
+      .all([hasUserWallets])
+      .then((result) => {
+        models.user.destroy({
+          where: {
+            id: req.params.userid
+          }
+        })
+        .then((result) => {
+          res.status(200).send({message: 'User deleted successfully'});
+        })
+        .catch((err) => {
+          res.status(500).send({ err });
+        });
+      })
+      .catch((err) => {
+        res.status(500).send({ err });
+      });
   }
 }
 
