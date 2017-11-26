@@ -20,14 +20,18 @@ class Wallet {
   }
 
   getwallet(walletid) {
-    models.wallet.find({
-      id: walletid
-    })
-    .then((result) => {
-      return result.dataValues;
-    })
-    .catch((err) => {
-      throw new Error('An error occured during a wallet find');
+    return new Promise((resolve, reject) => {
+      models.wallet.find({
+        where: {
+          id: walletid
+        }
+      })
+      .then((result) => {
+        resolve(result.dataValues);
+      })
+      .catch((err) => {
+        reject('An error occured during a wallet find');
+      });
     });
   }
 
@@ -39,11 +43,9 @@ class Wallet {
       userid: req.params.userid
     })
     .then((result) => {
-      console.log(result.dataValues);
       res.status(200).json({ result });
     })
     .catch((err) => {
-      console.log(err);
       res.status(500).json({ error: 'An error occurred' });
     });
   }
@@ -68,16 +70,42 @@ class Wallet {
   }
 
   deletewallet(req, res) {
-    models.wallet.delete({
-      id: req.params.walletid
-    })
-    .then((result) => {
-      res.status(200).send({message: 'Wallet deleted'});
-    })
-    .catch((err) => {
-      console.log(err);
-      res.status(500).json({ error: 'An error occurred' });
+    const walletHasCards = new Promise((resolve, reject) => {
+      models.cards.find({
+        where: {
+          walletid: req.params.walletid
+        }
+      })
+        .then((result) => {
+          console.log(result);
+          if (result == null) {
+            resolve();
+          } else {
+            reject('There are cards in this wallet, delete them');
+          }
+        })
+        .catch((err) => reject(err));
     });
+
+    Promise
+      .all([walletHasCards])
+      .then((result) => {
+        models.wallet.destroy({
+          where: {
+            id: req.params.walletid
+          }
+        })
+        .then((result) => {
+          res.status(200).send({message: 'Wallet deleted'});
+        })
+        .catch((err) => {
+          console.log(err);
+          res.status(500).json({ error: 'An error occurred' });
+        });
+      })
+      .catch((err) => {
+        res.status(500).send({ error: err });
+      })
   }
 
   getlimit(req, res) {
@@ -96,25 +124,37 @@ class Wallet {
   }
 
   editlimit(req, res, newLimit) {
-    const { maxlimit } = this.getwallet(req.params.walletid);
-    const selector = {
-      where: {
-        id: req.params.walletid
-      }
-    };
-    models.wallet.update(
-      newLimit, 
-      selector
-    )
-    .then((result) => {
-      res.status(200).send({message: 'Limit information updated'});
-    })
-    .catch((err) => {
-      console.log(err);
-      res.status(500).json({ error: 'An error occurred' });
-    });
-  }
+    this
+      .getwallet(req.params.walletid)
+      .then((walletData) => {
+        const { maxlimit } = walletData;
+        const selector = {
+          where: {
+            id: req.params.walletid
+          }
+        };
 
+        if (newLimit.limit > maxlimit) {
+          res.status(500).send({ error: 'Wallet new limit cannot be bigger than its max limit' });
+        } else {
+          models.wallet.update(
+            newLimit, 
+            selector
+          )
+          .then((result) => {
+            res.status(200).send({message: 'Limit information updated'});
+          })
+          .catch((err) => {
+            console.log(err);
+            res.status(500).json({ error: 'An error occurred' });
+          });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        res.status(500).send({ error: err});
+      })
+  }
 }
 
 module.exports = () => {
