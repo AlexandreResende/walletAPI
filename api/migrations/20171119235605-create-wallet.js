@@ -14,6 +14,9 @@ module.exports = {
       userid: {
         type: Sequelize.INTEGER
       },
+      totalpurchased: {
+        type: Sequelize.DOUBLE
+      },
       limit: {
         type: Sequelize.DOUBLE
       },

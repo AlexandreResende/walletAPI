@@ -40,6 +40,7 @@ class Wallet {
       name: walletInfo.name,
       limit: 0,
       maxlimit: 0,
+      totalpurchased: 0,
       userid: req.params.userid
     })
     .then((result) => {

@@ -4,7 +4,8 @@ module.exports = (sequelize, DataTypes) => {
     name: DataTypes.STRING,
     userid: DataTypes.INTEGER,
     limit: DataTypes.DOUBLE,
-    maxlimit: DataTypes.DOUBLE
+    maxlimit: DataTypes.DOUBLE,
+    totalpurchased: DataTypes.DOUBLE
   }, {
     classMethods: {
       associate: function(models) {
