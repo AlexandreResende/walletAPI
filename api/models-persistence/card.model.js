@@ -4,6 +4,42 @@ class Card {
 
   constructor() {}
 
+  verifyWallet(walletId) {
+    return new Promise((resolve, reject) => {
+      models.wallet.findOne({
+        where: {
+          id: walletId
+        }
+      })
+        .then((result) => {
+          if (result === null) {
+            reject('Wallet does not exist');
+          }
+          resolve();
+        })
+    });
+  }
+
+  verifyCard(cardId) {
+    return new Promise((resolve, reject) => {
+      models.cards.findOne({
+        where: {
+          id: cardId
+        }
+      })
+        .then((result) => {
+          console.log('Result: ' + result);
+          if (result === null) {
+            reject('Card does not exist');
+          }
+          resolve();
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
+  }
+
   getcards() {
     models.cards.findAll({
       walletid: req.params.walletid
@@ -12,17 +48,19 @@ class Card {
       res.status(200).json({ result });
     })
     .catch((err) => {
+      console.log(err);
       res.status(500).json({ error: 'An error occurred when finding a used card' });
     });
   }
 
   addcard(req, res, cardInfo) {
-    const cardNumber = {
-      number: cardInfo.number
-    }
-
+    const isWalletRegistered = this.verifyWallet(req.params.walletid);
     const isCardRegistered = new Promise((resolve, reject) => {
-      models.cards.find(cardNumber)
+      models.cards.find({
+        where: {
+          number: cardInfo.number
+        }
+      })
         .then((result) => {
           if (result === null) {
             resolve()
@@ -31,12 +69,12 @@ class Card {
           }
         })
         .catch((err) => {
-          res.status(500).json({ error: 'An error occurred when finding a used card' });
+          res.status(500).json({ error: 'An error occurred' });
         });
     });
 
     Promise
-      .all([isCardRegistered])
+      .all([isWalletRegistered, isCardRegistered])
       .then((result) => {
         models.cards.create({
           number: cardInfo.number,
@@ -47,7 +85,6 @@ class Card {
           purchased: 0
         })
         .then((result) => {
-          console.log(result.dataValues);
           res.status(200).json({ result });
         })
         .catch((err) => {
@@ -60,35 +97,52 @@ class Card {
   }
 
   editcard(req, res, newCardInfo) {
-    const selector = {
-      where: {
-        id: req.params.cardid
-      }
-    }
-    models.cards.update(
-      newCardInfo,
-      selector
-    )
-    .then((result) => {
-      console.log(result.dataValues);
-      res.status(200).json({ result });
-    })
-    .catch((err) => {
-      res.status(500).json({ error: 'An error occurred' });
-    });
+    const isCardRegistered = this.verifyCard(req.params.cardid);
+
+    Promise
+      .all([isCardRegistered])
+      .then((result) => {
+        models.cards.update(
+          newCardInfo,
+          {
+            where: {
+              id: req.params.cardid
+            }
+          }
+        )
+        .then((result) => {
+          console.log(result.dataValues);
+          res.status(200).json({ result });
+        })
+        .catch((err) => {
+          res.status(500).json({ error: 'An error occurred' });
+        });
+      })
+      .catch((err) => {
+        res.status(500).json({ error: 'An error occurred' });
+      });
   }
 
   deletecard(req, res) {
-    models.cards.delete({
-      id: req.params.cardid
-    })
-    .then((result) => {
-      console.log(result.dataValues);
-      res.status(200).json({ result });
-    })
-    .catch((err) => {
-      res.status(500).json({ error: 'An error occurred' });
-    });
+    const isCardRegistered = this.verifyCard(req.params.cardid);
+
+    Promise
+      .all([isCardRegistered])
+      .then((result) => {
+        models.cards.delete({
+          id: req.params.cardid
+        })
+        .then((result) => {
+          console.log(result.dataValues);
+          res.status(200).json({ result });
+        })
+        .catch((err) => {
+          res.status(500).json({ error: 'An error occurred' });
+        });
+      })
+      .catch((err) => {
+        res.status(500).json({ error: 'An error occurred' });
+      });
   }
 
 }
