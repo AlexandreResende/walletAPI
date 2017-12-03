@@ -40,16 +40,18 @@ class Card {
     });
   }
 
-  getcards() {
+  getcards(req, res) {
     models.cards.findAll({
-      walletid: req.params.walletid
+      where : {
+        walletid: req.params.walletid
+      }
     })
     .then((result) => {
       res.status(200).json({ result });
     })
     .catch((err) => {
       console.log(err);
-      res.status(500).json({ error: 'An error occurred when finding a used card' });
+      res.status(500).send({ err });
     });
   }
 
@@ -69,7 +71,7 @@ class Card {
           }
         })
         .catch((err) => {
-          res.status(500).json({ error: 'An error occurred' });
+          res.status(500).send({ err });
         });
     });
 
@@ -94,7 +96,7 @@ class Card {
         });
       })
     .catch((err) => {
-      res.status(500).json({ error: err });
+      res.status(500).send({ err });
     });
   }
 
@@ -121,7 +123,7 @@ class Card {
         });
       })
       .catch((err) => {
-        res.status(500).json({ error: 'An error occurred' });
+        res.status(500).send({ err });
       });
   }
 
@@ -139,11 +141,11 @@ class Card {
           res.status(200).json({ result });
         })
         .catch((err) => {
-          res.status(500).json({ error: 'An error occurred' });
+          res.status(500).send({ err });
         });
       })
       .catch((err) => {
-        res.status(500).json({ error: 'An error occurred' });
+        res.status(500).send({ err });
       });
   }
 
