@@ -58,23 +58,7 @@ class Card {
 
   addcard(req, res, cardInfo) {
     const isWalletRegistered = this.verifyWallet(req.params.walletid);
-    const isCardRegistered = new Promise((resolve, reject) => {
-      models.cards.find({
-        where: {
-          number: cardInfo.number
-        }
-      })
-        .then((result) => {
-          if (result === null) {
-            resolve()
-          } else {
-            reject('Card already being used');
-          }
-        })
-        .catch((err) => {
-          res.status(500).send({ err });
-        });
-    });
+    const isCardRegistered = Verification().isCardNumberRegistered(cardInfo.number);
 
     Promise
       .all([isWalletRegistered, isCardRegistered])
@@ -90,7 +74,18 @@ class Card {
           purchased: 0
         })
         .then((result) => {
-          res.status(200).send({ result });
+          models.wallet.find({
+            where: {
+              id: req.params.walletid
+            }
+          })
+            .then((result) => {
+              result.increment(['maxlimit'], { by: cardInfo.limit });
+              res.status(200).send({ result });
+            })
+            .catch((err) => {
+              res.status(500).send({ err });
+            });
         })
         .catch((err) => {
           res.status(500).send({ error: 'An error occurred' });
@@ -153,10 +148,24 @@ class Card {
 
   releasecredit(req, res) {
     const isCardRegistered = Verification().isCardValid(req.params.cardid);
-
+    const oldPurchasedValue = new Promise((resolve, reject) => {
+      models.cards.find({
+        where: {
+          id: req.params.cardid
+        }
+      })
+        .then((result) => {
+          resolve(result.dataValues.purchased);
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
+    
     Promise
-      .all([isCardRegistered])
+      .all([isCardRegistered, oldPurchasedValue])
       .then((result) => {
+        console.log(result);
         models.cards.update({
           purchased: 0
         },{
@@ -165,17 +174,32 @@ class Card {
           }
         })
         .then((result) => {
-          res.status(200).send({ message: 'Credit released successfully' });
+          const oldPurchased = result[1];
+          models.wallet.find({
+            where: {
+              id: req.params.walletid
+            }
+          })
+            .then((result) => {
+              result.decrement(['totalpurchased'], { by: oldPurchased });
+              res.status(200).send({ message: 'Credit released successfully' });
+            })
+            .catch((err) => {
+              console.log(err);
+              res.status(500).send({ err });
+            });
         })
         .catch((err) => {
+          console.log(err);
           res.status(500).send({ err });
         });
       })
       .catch((err) => {
+        console.log(err);
         res.status(500).send({ err });
       });
   }
-
+  
 }
 
 module.exports = () => {
