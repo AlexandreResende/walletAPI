@@ -61,31 +61,32 @@ class Verification {
   }
 
   hasUserWallets(userId) {
-    const isUserRegistered = this.isUserValid(userId);
-
-    Promise
+    return new Promise((resolve, reject) => {
+      const isUserRegistered = this.isUserValid(userId);
+      
+      Promise
       .all([isUserRegistered])
       .then((result) => {
-        return new Promise((resolve, reject) => {
-          models.wallet.find({
-            where: {
-              userid: userId
-            }
-          })
-            .then((result) => {
-              if (result.length !== 0){
-                reject('You need to delete your wallets before');
-              }
-              resolve();
-            })
-            .catch((err) => {
-              reject(err);
-            });
+        models.wallet.find({
+          where: {
+            userid: userId
+          }
         })
-        .catch((err) => {
-          res.status(500).send({ err });
-        });  
-      });    
+          .then((result) => {
+            console.log(result);
+            if (result.length !== 0){
+              reject('You need to delete your wallets before');
+            }
+            resolve();
+          })
+          .catch((err) => {
+            reject(err);
+          });
+      })
+      .catch((err) => {
+        reject(err);
+      });
+    });
   }
 
   isCardValid(cardId) {
