@@ -16,9 +16,7 @@ module.exports.signup = (req, res) => {
       const user = userModel().signupUser(req, res, req.body);
     })
     .catch((err) => {
-      console.log(err);
       if ('details' in err) {
-        console.log(err);
         res.status(500).send({error: err.details[0].message});
       } else {
         res.status(500).send({ error: err });
