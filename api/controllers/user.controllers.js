@@ -53,7 +53,7 @@ module.exports.edituser = (req, res) => {
       const user = userModel().editUser(req, res, req.body);
     })
     .catch((err) => {
-      res.status(500).send({error: err.details[0].message});
+      res.status(500).send({ error: err.details[0].message });
     });
 }
 
