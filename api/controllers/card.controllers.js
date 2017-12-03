@@ -54,3 +54,7 @@ module.exports.editcard = (req, res) => {
 module.exports.deletecard = (req, res) => {
   cardModel().deletecard(req, res);
 };
+
+module.exports.releasecredit = (req, res) => {
+  cardModel().releasecredit(req, res);
+};
