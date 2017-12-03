@@ -3,6 +3,29 @@ const Joi = require('joi');
 
 const userModel = require('../models-persistence/user.model');
 
+module.exports.signup = (req, res) => {
+  const signupSchema = {
+    name: Joi.string().required().min(1),
+    email: Joi.string().email().required(),
+    password: Joi.string().required()
+  };
+
+  Joi
+    .validate(req.body, signupSchema)
+    .then((result) => {
+      const user = userModel().signupUser(req, res, req.body);
+    })
+    .catch((err) => {
+      console.log(err);
+      if ('details' in err) {
+        console.log(err);
+        res.status(500).send({error: err.details[0].message});
+      } else {
+        res.status(500).send({ error: err });
+      }
+    });
+}
+
 module.exports.authentication = (req, res) => {
   const authenticationSchema = {
     email: Joi.string().email().required(),
@@ -18,23 +41,6 @@ module.exports.authentication = (req, res) => {
     })
     .catch((err) => {
       res.status(500).send({ error: err.details[0].message });
-    });
-}
-
-module.exports.signup = (req, res) => {
-  const signupSchema = {
-    name: Joi.string().required().min(1),
-    email: Joi.string().email().required(),
-    password: Joi.string().required()
-  };
-
-  Joi
-    .validate(req.body, signupSchema)
-    .then((result) => {
-      const user = userModel().signupUser(req, res, req.body);
-    })
-    .catch((err) => {
-      res.status(500).send({error: err.details[0].message});
     });
 }
 
