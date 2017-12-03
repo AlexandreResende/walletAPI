@@ -128,31 +128,31 @@ class Verification {
   }
 
   hasWalletCards(userId, walletId) {
-    const isUserWalletRelationshipValid = this.userWalletRelationshipValid(userId, walletId);
-
-    Promise
-    .all([isUserWalletRelationshipValid])
-    .then((result) => {
-      return new Promise((resolve, reject) => {
-        models.cards.find({
-          where: {
-            walletid: walletId
-          }
-        })
-          .then((result) => {
-            if (result.length !== 0){
-              reject('You need to delete your cards before');
+    return new Promise((resolve, reject) => {
+      const isUserWalletRelationshipValid = this.userWalletRelationshipValid(userId, walletId);
+      
+      Promise
+      .all([isUserWalletRelationshipValid])
+      .then((result) => {
+          models.cards.find({
+            where: {
+              walletid: walletId
             }
-            resolve();
           })
-          .catch((err) => {
-            res.status(500).send({ err });
-          });
-      })
-      .catch((err) => {
-        res.status(500).send({ err });
-      }); 
-    }); 
+            .then((result) => {
+              if (result.length !== 0){
+                reject('You need to delete your cards before');
+              }
+              resolve();
+            })
+            .catch((err) => {
+              reject(err);
+            });
+        })
+        .catch((err) => {
+          reject(err);
+        }); 
+    });
   }
 
   userWalletRelationshipValid(userId, walletId) {
