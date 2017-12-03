@@ -13,4 +13,6 @@ router.put('/:userid/:walletid/:cardid', cardController.editcard);
 
 router.delete('/:userid/:walletid/:cardid', cardController.deletecard);
 
+router.put('/:userid/:walletid/:cardid/releasecredit', cardController.releasecredit);
+
 module.exports = router;

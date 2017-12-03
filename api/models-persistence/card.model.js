@@ -1,5 +1,6 @@
 
 const models = require('../models');
+const Verification = require('../helper/verification');
 class Card {
 
   constructor() {}
@@ -140,6 +141,31 @@ class Card {
         })
         .then((result) => {
           res.status(200).send({ message: 'Card deleted successfully' });
+        })
+        .catch((err) => {
+          res.status(500).send({ err });
+        });
+      })
+      .catch((err) => {
+        res.status(500).send({ err });
+      });
+  }
+
+  releasecredit(req, res) {
+    const isCardRegistered = Verification().isCardValid(req.params.cardid);
+
+    Promise
+      .all([isCardRegistered])
+      .then((result) => {
+        models.cards.update({
+          purchased: 0
+        },{
+          where: {
+            id: req.params.cardid
+          }
+        })
+        .then((result) => {
+          res.status(200).send({ message: 'Credit released successfully' });
         })
         .catch((err) => {
           res.status(500).send({ err });
