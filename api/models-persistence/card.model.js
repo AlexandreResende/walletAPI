@@ -47,7 +47,7 @@ class Card {
       }
     })
     .then((result) => {
-      res.status(200).json({ result });
+      res.status(200).send({ result });
     })
     .catch((err) => {
       console.log(err);
@@ -89,10 +89,10 @@ class Card {
           purchased: 0
         })
         .then((result) => {
-          res.status(200).json({ result });
+          res.status(200).send({ result });
         })
         .catch((err) => {
-          res.status(500).json({ error: 'An error occurred' });
+          res.status(500).send({ error: 'An error occurred' });
         });
       })
     .catch((err) => {
@@ -116,10 +116,10 @@ class Card {
         )
         .then((result) => {
           console.log(result.dataValues);
-          res.status(200).json({ result });
+          res.status(200).send({ message: 'Card edited successfully' });
         })
         .catch((err) => {
-          res.status(500).json({ error: 'An error occurred' });
+          res.status(500).send({ error: 'An error occurred' });
         });
       })
       .catch((err) => {
@@ -133,12 +133,13 @@ class Card {
     Promise
       .all([isCardRegistered])
       .then((result) => {
-        models.cards.delete({
-          id: req.params.cardid
+        models.cards.destroy({
+          where: {
+            id: req.params.cardid
+          }
         })
         .then((result) => {
-          console.log(result.dataValues);
-          res.status(200).json({ result });
+          res.status(200).send({ message: 'Card deleted successfully' });
         })
         .catch((err) => {
           res.status(500).send({ err });
