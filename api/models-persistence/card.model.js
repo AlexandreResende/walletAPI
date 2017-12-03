@@ -82,6 +82,8 @@ class Card {
           cvv: cardInfo.cvv,
           limit: cardInfo.limit,
           walletid: req.params.walletid,
+          duedate: cardInfo.duedate,
+          expirationdate: cardInfo.expirationdate,
           purchased: 0
         })
         .then((result) => {
