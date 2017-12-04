@@ -38,7 +38,7 @@ class UserDAO {
     })
       .then((result) => {
         if (result) {
-          res.status(200).send({message: 'User data is valid. User authenticated'});
+          res.status(200).send({message: 'User data is valid. User authenticated', userId: result.dataValues.id});
         } else {
           res.status(500).send({ err: 'User not found' });
         }
