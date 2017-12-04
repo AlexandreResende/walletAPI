@@ -18,7 +18,7 @@ class UserDAO {
           password: userInputData.password
         })
           .then((result) => {
-            res.status(201).send({message: 'User signed up successfully'});
+            res.status(201).send({message: 'User signed up successfully', userId: result.dataValues.id});
           })
           .catch((err) => {
             res.status(500).send({ err });
