@@ -73,7 +73,7 @@ class Card {
           expirationdate: cardInfo.expirationdate,
           purchased: 0
         })
-        .then((result) => {
+        .then((resultCard) => {
           models.wallet.find({
             where: {
               id: req.params.walletid
@@ -81,7 +81,7 @@ class Card {
           })
             .then((result) => {
               result.increment(['maxlimit'], { by: cardInfo.limit });
-              res.status(200).send({ result });
+              res.status(200).send({ resultCard });
             })
             .catch((err) => {
               res.status(500).send({ err });
