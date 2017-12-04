@@ -1,5 +1,6 @@
 
 const models = require('../models');
+const paymentRule = require('../helper/paymentRule');
 
 class Wallet {
 
