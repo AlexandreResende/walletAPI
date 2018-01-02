@@ -1,3 +1,5 @@
+import { Promise } from './C:/Users/Pichau/AppData/Local/Microsoft/TypeScript/2.6/node_modules/@types/bluebird';
+
 
 const models = require('../models');
 
@@ -184,7 +186,7 @@ class Verification {
       });
   }
 
-  walletCardRelationshipValid() {
+  walletCardRelationshipValid(userId, walletId, cardId) {
     const isCardRegistered = this.isCardValid(cardId);
     const isUserWalletRelationshipValid = this.userWalletRelationshipValid(userId, walletId); 
 
@@ -211,6 +213,33 @@ class Verification {
       .catch((err) => {
         reject(err);
       })
+  }
+
+  isNewLimitValid(cardId, newLimit) {
+    const isCardRegistered = this.isCardValid(cardId);
+
+    Promise
+      .all([isCardRegistered])
+      .then((isCardRegisteredResult) => {
+        models.card.findOne({
+          where: {
+            id: cardId
+          }
+        })
+        .then((cardFound) => {
+          if (cardFound.maxLimit <= newLimit) {
+            resolve();
+          } else {
+            reject('New limit is greater than max limit of the card');
+          }
+        })
+        .catch((err) => {
+          reject(err);
+        });
+      })
+      .catch((err) => {
+        reject(err);
+      });
   }
 }
 
