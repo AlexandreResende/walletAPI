@@ -15,4 +15,6 @@ router.delete('/:userid/:walletid/:cardid', cardController.deletecard);
 
 router.put('/:userid/:walletid/:cardid/releasecredit', cardController.releasecredit);
 
+router.put('/:userid/:walletid/:cardid/limit', cardController.editlimit);
+
 module.exports = router;

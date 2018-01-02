@@ -180,14 +180,14 @@ class Card {
               id: req.params.walletid
             }
           })
-            .then((result) => {
-              result.decrement(['totalpurchased'], { by: oldPurchased });
-              res.status(200).send({ message: 'Credit released successfully' });
-            })
-            .catch((err) => {
-              console.log(err);
-              res.status(500).send({ err });
-            });
+          .then((result) => {
+            result.decrement(['totalpurchased'], { by: oldPurchased });
+            res.status(200).send({ message: 'Credit released successfully' });
+          })
+          .catch((err) => {
+            console.log(err);
+            res.status(500).send({ err });
+          });
         })
         .catch((err) => {
           console.log(err);
@@ -199,7 +199,33 @@ class Card {
         res.status(500).send({ err });
       });
   }
-  
+
+  editlimit(req, res) {
+    const newLimit = req.body.limit;
+    const isCardRegistered = Verification().isCardValid(req.params.cardid);
+    const isNewLimitValid = Verification().isNewLimitValid(cardId, newLimit)
+    
+    Promise
+      .all([isCardRegistered])
+      .then((promisesResult) => {
+        models.cards.update({
+          limit: newLimit
+        },{
+          where: {
+            id: req.params.cardid
+          }
+        })
+        .then((editLimitResult) => {
+          res.status(200).send({ message: 'Limit of the card updated successfully' });
+        })
+        .catch((err) => {
+          res.status(500).send({ err });
+        });
+      })
+      .catch((err) => {
+        res.status(500).send({ err });
+      });
+  }
 }
 
 module.exports = () => {
