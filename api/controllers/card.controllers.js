@@ -58,3 +58,7 @@ module.exports.deletecard = (req, res) => {
 module.exports.releasecredit = (req, res) => {
   cardModel().releasecredit(req, res);
 };
+
+module.exports.editlimit = (req, res) => {
+  cardModel().editlimit(req, res);
+};
