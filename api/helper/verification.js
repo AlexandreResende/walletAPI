@@ -1,5 +1,3 @@
-import { Promise } from './C:/Users/Pichau/AppData/Local/Microsoft/TypeScript/2.6/node_modules/@types/bluebird';
-
 
 const models = require('../models');
 
