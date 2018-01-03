@@ -4,8 +4,6 @@ const paymentRule = require('../helper/paymentRule');
 
 class Wallet {
 
-  constructor() {}
-
   getwallets(req, res) {
     models.wallet.findAll({
       where: {
@@ -132,7 +130,7 @@ class Wallet {
         const { maxlimit } = walletData;
         const selector = {
           where: {
-            id: req.params.walletid
+            id: req.params.walletid,
           }
         };
 
@@ -141,20 +139,20 @@ class Wallet {
         } else {
           models.wallet.update(
             newLimit, 
-            selector
+            selector,
           )
-          .then((result) => {
-            res.status(200).send({message: 'Limit information updated'});
-          })
-          .catch((err) => {
-            console.log(err);
-            res.status(500).json({ error: 'An error occurred' });
-          });
+            .then((result) => {
+              res.status(200).send({message: 'Limit information updated'});
+            })
+            .catch((err) => {
+              console.log(err);
+              res.status(500).json({ error: 'An error occurred' });
+            });
         }
       })
       .catch((err) => {
         console.log(err);
-        res.status(500).send({ error: err});
+        res.status(500).send({ error: err });
       })
   }
 }
