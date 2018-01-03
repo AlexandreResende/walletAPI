@@ -156,88 +156,96 @@ class Verification {
   }
 
   userWalletRelationshipValid(userId, walletId) {
-    const isUserRegistered = this.isUserValid(userId);
-    const isWalletRegistered = this.isWalletValid(walletId);
-
-    Promise
-      .all([isUserRegistered, isWalletRegistered])
-      .then((result) => {
-        models.wallet.findOne({
-          where: {
-            id: walletId
-          }
-        })
-          .then((result) => {
-            console.log('VERIFICATION OF RELATIONSHIP USER-WALLET');
-            console.log(result);
-            if (result.userid !== userId) {
-              reject('User wallet relationship does not exist');
+    return new Promise((resolve, reject) => {
+      const isUserRegistered = this.isUserValid(userId);
+      const isWalletRegistered = this.isWalletValid(walletId);
+  
+      Promise
+        .all([isUserRegistered, isWalletRegistered])
+        .then((result) => {
+          models.wallet.findOne({
+            where: {
+              id: walletId
             }
-            resolve();
           })
-          .catch((err) => {
-            reject(err);
-          });
-      })
-      .catch((err) => {
-        reject(err);
-      });
-  }
-
-  walletCardRelationshipValid(userId, walletId, cardId) {
-    const isCardRegistered = this.isCardValid(cardId);
-    const isUserWalletRelationshipValid = this.userWalletRelationshipValid(userId, walletId); 
-
-    Promise
-      .all([isCardRegistered, isUserWalletRelationshipValid])
-      .then((result) => {
-        models.cards.findOne({
-          where: {
-            id: cardId
-          }
-        })
-          .then((result) => {
-            console.log('VERIFICATION OF RELATIONSHIP WALLET-CARD');
-            console.log(result);
-            if (result.walletid !== walletId) {
-              reject('Wallet card relationship does not exist');
-            }
-            resolve();
-          })
-          .catch((err) => {
-            reject(err);
-          });
-      })
-      .catch((err) => {
-        reject(err);
-      })
-  }
-
-  isNewLimitValid(cardId, newLimit) {
-    const isCardRegistered = this.isCardValid(cardId);
-
-    Promise
-      .all([isCardRegistered])
-      .then((isCardRegisteredResult) => {
-        models.card.findOne({
-          where: {
-            id: cardId
-          }
-        })
-        .then((cardFound) => {
-          if (cardFound.maxLimit <= newLimit) {
-            resolve();
-          } else {
-            reject('New limit is greater than max limit of the card');
-          }
+            .then((result) => {
+              console.log('VERIFICATION OF RELATIONSHIP USER-WALLET');
+              console.log(result);
+              if (result.userid !== userId) {
+                reject('User wallet relationship does not exist');
+              }
+              resolve();
+            })
+            .catch((err) => {
+              reject(err);
+            });
         })
         .catch((err) => {
           reject(err);
         });
-      })
-      .catch((err) => {
-        reject(err);
-      });
+    });
+  }
+
+  walletCardRelationshipValid(userId, walletId, cardId) {
+    return new Promise((resolve, reject) => {
+      const isCardRegistered = this.isCardValid(cardId);
+      const isUserWalletRelationshipValid = this.userWalletRelationshipValid(userId, walletId); 
+  
+      Promise
+        .all([isCardRegistered, isUserWalletRelationshipValid])
+        .then((result) => {
+          models.cards.findOne({
+            where: {
+              id: cardId
+            }
+          })
+            .then((result) => {
+              console.log('VERIFICATION OF RELATIONSHIP WALLET-CARD');
+              console.log(result);
+              if (result.walletid !== walletId) {
+                reject('Wallet card relationship does not exist');
+              }
+              resolve();
+            })
+            .catch((err) => {
+              reject(err);
+            });
+        })
+        .catch((err) => {
+          reject(err);
+        })
+    });
+  }
+
+  //method for the wallet for editing the limit
+  isWalletNewLimitValid(userId, walletId, cardId, newLimit) {
+    return new Promise((resolve, reject) => {
+      const isCardRegistered = this.isCardValid(cardId);
+      const isEntitiesRelationshipValid = this.walletCardRelationshipValid(userId, walletId, cardId);
+  
+      Promise
+        .all([isCardRegistered, isEntitiesRelationshipValid])
+        .then((isCardRegisteredResult) => {
+          models.card.findOne({
+            where: {
+              id: cardId
+            }
+          })
+          .then((cardFound) => {
+            if (cardFound.maxLimit <= newLimit) {
+              resolve();
+            } else {
+              reject('New limit is greater than max limit of the card');
+            }
+          })
+          .catch((err) => {
+            reject(err);
+          });
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
   }
 }
 
