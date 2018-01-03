@@ -165,7 +165,6 @@ class Card {
     Promise
       .all([isCardRegistered, oldPurchasedValue])
       .then((result) => {
-        console.log(result);
         models.cards.update({
           purchased: 0
         },{
@@ -203,19 +202,25 @@ class Card {
   editlimit(req, res) {
     const newLimit = req.body.limit;
     const isCardRegistered = Verification().isCardValid(req.params.cardid);
-    const isNewLimitValid = Verification().isNewLimitValid(cardId, newLimit)
+    const isEntitiesRelationshipValid = Verification().walletCardRelationshipValid(
+      req.params.cardid, 
+      req.params.walletId, 
+      req.params.cardId
+    );
     
     Promise
       .all([isCardRegistered])
       .then((promisesResult) => {
-        models.cards.update({
-          limit: newLimit
-        },{
+        models.cards.findOne({
           where: {
             id: req.params.cardid
           }
         })
         .then((editLimitResult) => {
+          const oldLimit = editLimitResult.dataValues.limit;
+          //editLimitResult is an Instance (row) of the table ""cards""
+          //do not forget to SAve after changing ans instance
+          editLimitResult.set('limit', newLimit).save();
           res.status(200).send({ message: 'Limit of the card updated successfully' });
         })
         .catch((err) => {
