@@ -5,42 +5,6 @@ class Card {
 
   constructor() {}
 
-  verifyWallet(walletId) {
-    return new Promise((resolve, reject) => {
-      models.wallet.findOne({
-        where: {
-          id: walletId
-        }
-      })
-        .then((result) => {
-          if (result === null) {
-            reject('Wallet does not exist');
-          }
-          resolve();
-        })
-    });
-  }
-
-  verifyCard(cardId) {
-    return new Promise((resolve, reject) => {
-      models.cards.findOne({
-        where: {
-          id: cardId
-        }
-      })
-        .then((result) => {
-          console.log('Result: ' + result);
-          if (result === null) {
-            reject('Card does not exist');
-          }
-          resolve();
-        })
-        .catch((err) => {
-          reject(err);
-        });
-    });
-  }
-
   getcards(req, res) {
     models.cards.findAll({
       where : {
@@ -57,7 +21,7 @@ class Card {
   }
 
   addcard(req, res, cardInfo) {
-    const isWalletRegistered = this.verifyWallet(req.params.walletid);
+    const isWalletRegistered = Verification().isWalletValid(req.params.walletid);
     const isCardRegistered = Verification().isCardNumberRegistered(cardInfo.number);
 
     Promise
@@ -97,7 +61,7 @@ class Card {
   }
 
   editcard(req, res, newCardInfo) {
-    const isCardRegistered = this.verifyCard(req.params.cardid);
+    const isCardRegistered = Verification().isCardValid(req.params.cardid);
 
     Promise
       .all([isCardRegistered])
@@ -124,7 +88,7 @@ class Card {
   }
 
   deletecard(req, res) {
-    const isCardRegistered = this.verifyCard(req.params.cardid);
+    const isCardRegistered = Verification().isCardValid(req.params.cardid);
 
     Promise
       .all([isCardRegistered])
@@ -213,15 +177,26 @@ class Card {
       .then((promisesResult) => {
         models.cards.findOne({
           where: {
-            id: req.params.cardid
-          }
+            id: req.params.cardid,
+          },
         })
         .then((editLimitResult) => {
           const oldLimit = editLimitResult.dataValues.limit;
           //editLimitResult is an Instance (row) of the table ""cards""
           //do not forget to SAve after changing ans instance
           editLimitResult.set('limit', newLimit).save();
-          res.status(200).send({ message: 'Limit of the card updated successfully' });
+          models.wallet.findOne({
+            where: {
+              id: req.params.walletid,
+            },
+          })
+            .then((walletResult) => {
+              walletResult.increment(['maxlimit'], { by: newLimit - oldLimit });
+              res.status(200).send({ message: 'Limit of the card updated successfully' });
+            })
+            .catch((err) => {
+              res.status(500).send({ err });
+            });
         })
         .catch((err) => {
           res.status(500).send({ err });
