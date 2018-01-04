@@ -1,13 +1,15 @@
 
 const models = require('../models');
-const Verification = require('../helper/verification');
+
+const UserVerification = require('../helper/UserVerification');
+
 
 class UserDAO {
 
   constructor() {}
 
   signupUser(req, res, userInputData) {
-    const isEmailRegistered = Verification().isEmailUsed(userInputData.email);
+    const isEmailRegistered = UserVerification.isEmailUsed(userInputData.email);
 
     Promise
       .all([isEmailRegistered])
@@ -49,7 +51,7 @@ class UserDAO {
   };
 
   editUser(req, res, userUpdateInfo) {
-    const isUserRegistered = Verification().isUserValid(req.params.userid);
+    const isUserRegistered = UserVerification.isUserValid(req.params.userid);
 
     Promise
       .all([isUserRegistered])
@@ -76,8 +78,8 @@ class UserDAO {
   }
 
   deleteUser(req, res) {
-    const isUserRegistered = Verification().isUserValid(req.params.userid);
-    const hasUserWallets = Verification().hasUserWallets(req.params.userid);
+    const isUserRegistered = UserVerification.isUserValid(req.params.userid);
+    const hasUserWallets = UserVerification.hasUserWallets(req.params.userid);
 
     Promise
     .all([isUserRegistered, hasUserWallets])
