@@ -2,9 +2,7 @@
 const models = require('../models');
 
 class Verification {
-
-  constructor() {}
-
+  
   isUserValid(userId) {
     return new Promise((resolve, reject) => {
       models.user.findOne({
