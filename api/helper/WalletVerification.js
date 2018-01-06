@@ -14,7 +14,7 @@ class WalletVerification {
       })
         .then((result) => {
           if (result === null) {
-            reject(new Error('Wallet not registered'));
+            reject('Wallet not registered');
           }
           resolve();
         })
@@ -41,7 +41,7 @@ class WalletVerification {
           })
             .then((result) => {
               if (result.length !== 0) {
-                reject(new Error('You need to delete your cards before'));
+                reject('You need to delete your cards before');
               }
               resolve();
             })
@@ -76,7 +76,7 @@ class WalletVerification {
               if (cardFound.maxLimit <= newLimit) {
                 resolve();
               } else {
-                reject(new Error('New limit is greater than max limit of the card'));
+                reject('New limit is greater than max limit of the card');
               }
             })
             .catch((err) => {

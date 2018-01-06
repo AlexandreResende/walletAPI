@@ -11,7 +11,7 @@ class CardVerification {
       })
         .then((result) => {
           if (result === null) {
-            reject(new Error('Card not registered'));
+            reject('Card not registered');
           }
           resolve();
         })
@@ -30,7 +30,7 @@ class CardVerification {
       })
         .then((result) => {
           if (result !== null) {
-            reject(new Error('Card already registered'));
+            reject('Card already registered');
           }
           resolve();
         })

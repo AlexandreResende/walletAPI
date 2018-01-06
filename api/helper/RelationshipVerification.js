@@ -21,7 +21,7 @@ class Verification {
           })
             .then((result) => {
               if (result.userid !== userId) {
-                reject(new Error('User wallet relationship does not exist'));
+                reject('User wallet relationship does not exist');
               }
               resolve();
             })
@@ -50,7 +50,7 @@ class Verification {
           })
             .then((result) => {
               if (result.walletid !== walletId) {
-                reject(new Error('Wallet card relationship does not exist'));
+                reject('Wallet card relationship does not exist');
               }
               resolve();
             })

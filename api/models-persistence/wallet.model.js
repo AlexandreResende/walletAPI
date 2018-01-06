@@ -31,7 +31,7 @@ class Wallet {
           resolve(result.dataValues);
         })
         .catch((err) => {
-          reject(new Error('An error occured during a wallet find'));
+          reject('An error occured during a wallet find');
         });
     });
   }

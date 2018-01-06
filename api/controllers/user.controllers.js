@@ -1,7 +1,12 @@
 
 const Joi = require('joi');
 
-const userModel = require('../models-persistence/user.model');
+const {
+  signupUser,
+  authentication,
+  editUser,
+  deleteUser,
+} = require('../models-persistence/user.model');
 
 module.exports.signup = (req, res) => {
   const signupSchema = {
@@ -9,18 +14,18 @@ module.exports.signup = (req, res) => {
     email: Joi.string().email().required(),
     password: Joi.string().required()
   };
+  const signupValidation = Joi.validate(req.body, signupSchema);
 
-  Joi
-    .validate(req.body, signupSchema)
+  Promise
+    .all([signupValidation])
     .then(() => {
-      userModel.signupUser(req, res, req.body);
+      signupUser(req, res, req.body);
     })
     .catch((err) => {
-      if ('details' in err) {
-        res.status(500).send({ error: err.details[0].message });
-      } else {
-        res.status(500).send({ error: err });
-      }
+      res.status(500).send({
+        message: 'An error occurred in the signup',
+        error: err,
+      });
     });
 }
 
@@ -33,23 +38,13 @@ module.exports.authentication = (req, res) => {
   Joi
     .validate(req.body, authenticationSchema)
     .then(() => {
-      userModel.authentication(req, res, req.body);
+      authentication(req, res, req.body);
     })
     .catch((err) => {
-      res.status(500).send({ error: err.details[0].message });
+      res.status(500).send({
+        message: 'An error occurred in the authentication',
+        error: err.details[0].message });
     });
-  /*
-  const authenticationValidation = Joi.validate(req.body, authenticationSchema);
-  
-  Promise
-    .all([authenticationValidation])
-    .then(() => {
-      userModel.authentication(req, res, req.body);
-    })
-    .catch((err) => {
-      res.status(500).send({ error: err.details[0].message });
-    });
-  */
 }
 
 module.exports.edituser = (req, res) => {
@@ -62,25 +57,15 @@ module.exports.edituser = (req, res) => {
   Joi
     .validate(req.body, editUserSchema)
     .then(() => {
-      userModel.editUser(req, res, req.body);
+      editUser(req, res, req.body);
     })
     .catch((err) => {
-      res.status(500).send({ error: err.details[0].message });
+      res.status(500).send({
+        message: 'An error occurred when editing the data of the user',
+        error: err.details[0].message });
     });
-  /*
-  const editUserValidation = Joi.validate(req.body, editUserSchema);
-
-  Promise
-    .all([editUserValidation])
-    .then(() => {
-      userModel.editUser(req, res, req.body);
-    })
-    .catch((err) => {
-      res.status(500).send({ error: err.details[0].message });
-    });
-  */
 }
 
 module.exports.deleteuser = (req, res) => {
-  userModel.deleteUser(req, res);
+  deleteUser(req, res);
 }
