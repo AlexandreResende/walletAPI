@@ -26,13 +26,13 @@ class WalletVerification {
 
   static hasWalletCards(userId, walletId) {
     return new Promise((resolve, reject) => {
-      const isUserWalletRelationshipValid = RelationshipVerification.userWalletRelationshipValid(
+      const isisUserWalletRelationshipValid = RelationshipVerification.isUserWalletRelationshipValid(
         userId,
         walletId,
       );
 
       Promise
-        .all([isUserWalletRelationshipValid])
+        .all([isisUserWalletRelationshipValid])
         .then((result) => {
           models.cards.find({
             where: {
@@ -58,7 +58,7 @@ class WalletVerification {
   static isWalletNewLimitValid(userId, walletId, cardId, newLimit) {
     return new Promise((resolve, reject) => {
       const isCardRegistered = CardVerification.isCardValid(cardId);
-      const isEntitiesRelationshipValid = RelationshipVerification.walletCardRelationshipValid(
+      const isEntitiesRelationshipValid = RelationshipVerification.isWalletCardRelationshipValid(
         userId,
         walletId,
         cardId,
