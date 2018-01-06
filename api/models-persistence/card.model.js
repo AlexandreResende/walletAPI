@@ -170,7 +170,7 @@ class Card {
   static editlimit(req, res) {
     const newLimit = req.body.limit;
     const isCardRegistered = CardVerification.isCardValid(req.params.cardid);
-    const isEntitiesRelationshipValid = RelationshipVerification.walletCardRelationshipValid(
+    const isEntitiesRelationshipValid = RelationshipVerification.isWalletCardRelationshipValid(
       req.params.cardid,
       req.params.walletId,
       req.params.cardId,

@@ -2,6 +2,8 @@
 const models = require('../models');
 
 const paymentRule = require('../helper/paymentRule');
+const WalletVerification = require('../helper/WalletVerification');
+const RelationshipVerification = require('../helper/RelationshipVerification');
 
 class Wallet {
   static getwallets(req, res) {
@@ -14,7 +16,7 @@ class Wallet {
         res.status(200).json({ result });
       })
       .catch((err) => {
-        res.status(500).json({ error: 'An error occurred' });
+        res.status(500).json({ error: err });
       });
   }
 
@@ -51,52 +53,73 @@ class Wallet {
   }
 
   static editwallet(req, res, newName) {
+    const isWalletValid = WalletVerification.isWalletValid(req.params.walletid);
+    const isUserWalletRelationshipValid = RelationshipVerification.isisUserWalletRelationshipValid(
+      req.params.userid,
+      req.params.walletid,
+    );
     const selector = {
       where: {
         id: req.params.walletid,
       },
     };
-    models.wallet.update(
-      newName,
-      selector,
-    )
-      .then((result) => {
-        res.status(200).send({ message: 'Wallet information updated' });
+
+    Promise
+      .all([isWalletValid, isUserWalletRelationshipValid])
+      .then(() => {
+        models.wallet.update(
+          newName,
+          selector,
+        )
+          .then(() => {
+            res.status(200).send({ message: 'Wallet information updated' });
+          })
+          .catch((err) => {
+            res.status(500).json({ error: err });
+          });
       })
       .catch((err) => {
-        console.log(err);
-        res.status(500).json({ error: 'An error occurred' });
+        res.status(500).json({ error: err });
       });
   }
 
   static deletewallet(req, res) {
-    const walletHasCards = new Promise((resolve, reject) => {
-      models.cards.find({
-        where: {
-          walletid: req.params.walletid,
-        },
-      })
-        .then((result) => {
-          console.log(result);
-          if (result == null) {
-            resolve();
-          } else {
-            reject(new Error('There are cards in this wallet, delete them'));
-          }
-        })
-        .catch(err => reject(err));
-    });
+    const isWalletValid = WalletVerification.isWalletValid(req.params.walletid);
+    const hasWalletCards = WalletVerification.hasWalletCards(req.params.walletid);
 
     Promise
-      .all([walletHasCards])
-      .then((result) => {
+      .all([isWalletValid, hasWalletCards])
+      .then(() => {
         models.wallet.destroy({
           where: {
             id: req.params.walletid,
           },
         })
-          .then((result) => {
+          .then(() => {
             res.status(200).send({ message: 'Wallet deleted' });
+          })
+          .catch((err) => {
+            res.status(500).json({ error: err });
+          });
+      })
+      .catch((err) => {
+        res.status(500).send({ error: err });
+      });
+  }
+
+  static getlimit(req, res) {
+    const isWalletValid = WalletVerification.isWalletValid(req.params.walletid);
+
+    Promise
+      .all([isWalletValid])
+      .then(() => {
+        models.wallet.find({
+          where: {
+            id: req.params.walletid,
+          },
+        })
+          .then((result) => {
+            res.status(200).json({ limit: result.dataValues.limit });
           })
           .catch((err) => {
             console.log(err);
@@ -108,46 +131,40 @@ class Wallet {
       });
   }
 
-  static getlimit(req, res) {
-    models.wallet.find({
-      where: {
-        id: req.params.walletid,
-      },
-    })
-      .then((result) => {
-        res.status(200).json({ limit: result.dataValues.limit });
-      })
-      .catch((err) => {
-        console.log(err);
-        res.status(500).json({ error: 'An error occurred' });
-      });
-  }
-
   static editlimit(req, res, newLimit) {
-    this
-      .getwallet(req.params.walletid)
-      .then((walletData) => {
-        const { maxlimit } = walletData;
-        const selector = {
-          where: {
-            id: req.params.walletid,
-          },
-        };
+    const isWalletValid = WalletVerification.isWalletValid(req.params.walletid);
 
-        if (newLimit.limit > maxlimit) {
-          res.status(500).send({ error: 'Wallet new limit cannot be bigger than its max limit' });
-        } else {
-          models.wallet.update(
-            newLimit,
-            selector,
-          )
-            .then((result) => {
-              res.status(200).send({ message: 'Limit information updated' });
-            })
-            .catch((err) => {
-              res.status(500).json({ error: 'An error occurred' });
-            });
-        }
+    Promise
+      .all([isWalletValid])
+      .then(() => {
+        this
+          .getwallet(req.params.walletid)
+          .then((walletData) => {
+            const { maxlimit } = walletData;
+            const selector = {
+              where: {
+                id: req.params.walletid,
+              },
+            };
+
+            if (newLimit.limit > maxlimit) {
+              res.status(500).send({ error: 'Wallet new limit cannot be bigger than its max limit' });
+            } else {
+              models.wallet.update(
+                newLimit,
+                selector,
+              )
+                .then(() => {
+                  res.status(200).send({ message: 'Limit information updated' });
+                })
+                .catch((err) => {
+                  res.status(500).json({ error: err });
+                });
+            }
+          })
+          .catch((err) => {
+            res.status(500).send({ error: err });
+          });
       })
       .catch((err) => {
         res.status(500).send({ error: err });

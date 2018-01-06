@@ -3,24 +3,21 @@ const models = require('../models');
 
 const UserVerification = require('../helper/UserVerification');
 
-
 class UserDAO {
 
-  constructor() {}
-
-  signupUser(req, res, userInputData) {
+  static signupUser(req, res, userInputData) {
     const isEmailRegistered = UserVerification.isEmailUsed(userInputData.email);
 
     Promise
       .all([isEmailRegistered])
-      .then((result) => {
+      .then(() => {
         models.user.create({
           name: userInputData.name,
           email: userInputData.email,
-          password: userInputData.password
+          password: userInputData.password,
         })
-          .then((result) => {
-            res.status(201).send({message: 'User signed up successfully', userId: result.dataValues.id});
+          .then((userCreated) => {
+            res.status(201).send({ message: 'User signed up successfully', userId: userCreated.dataValues.id });
           })
           .catch((err) => {
             res.status(500).send({ err });
@@ -31,16 +28,16 @@ class UserDAO {
       });
   }
 
-  authentication(req, res, userToBeFound) {
+  static authentication(req, res, userToAuthenticate) {
     models.user.find({
       where: {
-        email: userToBeFound.email,
-        password: userToBeFound.password
-      }
+        email: userToAuthenticate.email,
+        password: userToAuthenticate.password,
+      },
     })
-      .then((result) => {
-        if (result) {
-          res.status(200).send({message: 'User data is valid. User authenticated', userId: result.dataValues.id});
+      .then((authenticationResult) => {
+        if (authenticationResult) {
+          res.status(200).send({ message: 'User data is valid. User authenticated', userId: authenticationResult.dataValues.id });
         } else {
           res.status(500).send({ err: 'User not found' });
         }
@@ -50,58 +47,56 @@ class UserDAO {
       });
   };
 
-  editUser(req, res, userUpdateInfo) {
+  static editUser(req, res, userUpdateInfo) {
     const isUserRegistered = UserVerification.isUserValid(req.params.userid);
 
     Promise
       .all([isUserRegistered])
-      .then((result) => {
+      .then(() => {
         const selector = {
           where: {
-            id: req.params.userid
-          }
+            id: req.params.userid,
+          },
         };
         models.user.update(
           userUpdateInfo, 
-          selector
+          selector,
         )
-        .then((result) => {
-          res.status(200).send({message: 'User information updated'});
-        })
-        .catch((err) => {
-          res.status(500).send({ err });
-        });
+          .then(() => {
+            res.status(200).send({ message: 'User information updated' });
+          })
+          .catch((err) => {
+            res.status(500).send({ err });
+          });
       })
       .catch((err) => {
         res.status(500).send({ err });
       });
   }
 
-  deleteUser(req, res) {
+  static deleteUser(req, res) {
     const isUserRegistered = UserVerification.isUserValid(req.params.userid);
     const hasUserWallets = UserVerification.hasUserWallets(req.params.userid);
 
     Promise
-    .all([isUserRegistered, hasUserWallets])
-    .then((result) => {
-      models.user.destroy({
-        where: {
-          id: req.params.userid
-        }
-      })
-      .then((result) => {
-        res.status(200).send({message: 'User deleted successfully'});
+      .all([isUserRegistered, hasUserWallets])
+      .then(() => {
+        models.user.destroy({
+          where: {
+            id: req.params.userid,
+          },
+        })
+          .then(() => {
+            res.status(200).send({ message: 'User deleted successfully' });
+          })
+          .catch((err) => {
+            res.status(500).send({ err });
+          });
       })
       .catch((err) => {
         res.status(500).send({ err });
       });
-    })
-    .catch((err) => {
-      res.status(500).send({ err });
-    });
   }
 }
 
-module.exports = () => {
-  return new UserDAO();
-}
+module.exports = () => new UserDAO();
