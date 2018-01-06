@@ -10,7 +10,6 @@ class UserVerification {
         },
       })
         .then((result) => {
-          console.log(result);
           if (result === null) {
             reject(new Error('User does not exist'));
           }
@@ -31,25 +30,6 @@ class UserVerification {
             resolve();
           }
           reject(new Error('Email already in use'));
-        })
-        .catch((err) => {
-          reject(err);
-        });
-    });
-  }
-
-  static isWalletValid(walletId) {
-    return new Promise((resolve, reject) => {
-      models.wallet.findOne({
-        where: {
-          id: walletId,
-        },
-      })
-        .then((result) => {
-          if (result === null) {
-            reject(new Error('Wallet not registered'));
-          }
-          resolve();
         })
         .catch((err) => {
           reject(err);

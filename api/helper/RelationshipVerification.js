@@ -6,7 +6,7 @@ const CardVerification = require('./CardVerification');
 const WalletVerification = require('./WalletVerification');
 
 class Verification {
-  static userWalletRelationshipValid(userId, walletId) {
+  static isUserWalletRelationshipValid(userId, walletId) {
     return new Promise((resolve, reject) => {
       const isUserRegistered = UserVerification.isUserValid(userId);
       const isWalletRegistered = WalletVerification.isWalletValid(walletId);
@@ -35,13 +35,13 @@ class Verification {
     });
   }
 
-  walletCardRelationshipValid(userId, walletId, cardId) {
+  isWalletCardRelationshipValid(userId, walletId, cardId) {
     return new Promise((resolve, reject) => {
       const isCardRegistered = CardVerification.isCardValid(cardId);
-      const isUserWalletRelationshipValid = this.userWalletRelationshipValid(userId, walletId);
+      const isisUserWalletRelationshipValid = this.isUserWalletRelationshipValid(userId, walletId);
 
       Promise
-        .all([isCardRegistered, isUserWalletRelationshipValid])
+        .all([isCardRegistered, isisUserWalletRelationshipValid])
         .then((result) => {
           models.cards.findOne({
             where: {
