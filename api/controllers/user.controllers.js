@@ -12,12 +12,12 @@ module.exports.signup = (req, res) => {
 
   Joi
     .validate(req.body, signupSchema)
-    .then((result) => {
-      const user = userModel().signupUser(req, res, req.body);
+    .then(() => {
+      userModel.signupUser(req, res, req.body);
     })
     .catch((err) => {
       if ('details' in err) {
-        res.status(500).send({error: err.details[0].message});
+        res.status(500).send({ error: err.details[0].message });
       } else {
         res.status(500).send({ error: err });
       }
@@ -30,16 +30,26 @@ module.exports.authentication = (req, res) => {
     password: Joi.string().required()
   };
 
-  const authenticationValidation = Joi.validate(req.body, authenticationSchema);
-
-  Promise
-    .all([authenticationValidation])
-    .then((result) => {
-      const user = userModel().authentication(req, res, req.body);
+  Joi
+    .validate(req.body, authenticationSchema)
+    .then(() => {
+      userModel.authentication(req, res, req.body);
     })
     .catch((err) => {
       res.status(500).send({ error: err.details[0].message });
     });
+  /*
+  const authenticationValidation = Joi.validate(req.body, authenticationSchema);
+  
+  Promise
+    .all([authenticationValidation])
+    .then(() => {
+      userModel.authentication(req, res, req.body);
+    })
+    .catch((err) => {
+      res.status(500).send({ error: err.details[0].message });
+    });
+  */
 }
 
 module.exports.edituser = (req, res) => {
@@ -49,18 +59,28 @@ module.exports.edituser = (req, res) => {
     password: Joi.string().optional()
   };
 
+  Joi
+    .validate(req.body, editUserSchema)
+    .then(() => {
+      userModel.editUser(req, res, req.body);
+    })
+    .catch((err) => {
+      res.status(500).send({ error: err.details[0].message });
+    });
+  /*
   const editUserValidation = Joi.validate(req.body, editUserSchema);
 
   Promise
     .all([editUserValidation])
     .then(() => {
-      const user = userModel().editUser(req, res, req.body);
+      userModel.editUser(req, res, req.body);
     })
     .catch((err) => {
       res.status(500).send({ error: err.details[0].message });
     });
+  */
 }
 
 module.exports.deleteuser = (req, res) => {
-  const user = userModel().deleteUser(req, res);
+  userModel.deleteUser(req, res);
 }
