@@ -1,6 +1,6 @@
 # walletAPI
 
-## wallet api for managing credit cards
+## Wallet api for managing credit cards
 
 ## Technologies:
 1. Node.js
