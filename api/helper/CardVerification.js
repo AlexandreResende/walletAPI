@@ -41,4 +41,4 @@ class CardVerification {
   }
 }
 
-module.exports = () => new CardVerification();
+module.exports = CardVerification;
