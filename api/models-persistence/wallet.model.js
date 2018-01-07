@@ -3,11 +3,7 @@ const models = require('../models');
 
 const paymentRule = require('../helper/paymentRule');
 const getWallet = require('../helper/getWallet');
-const {
-  isWalletValid,
-  hasWalletCards,
-  isWalletNewLimitValid,
-} = require('../helper/WalletVerification');
+const WalletVerification = require('../helper/WalletVerification');
 const RelationshipVerification = require('../helper/RelationshipVerification');
 
 module.exports.getwallets = (req, res) => {
@@ -51,7 +47,7 @@ module.exports.addwallet = (req, res, walletInfo) => {
 }
 
 module.exports.editwallet = (req, res, newName) => {
-  const isWalletValidResponse = isWalletValid(req.params.walletid);
+  const isWalletValidResponse = WalletVerification.isWalletValid(req.params.walletid);
   const isUserWalletRelationshipValid = RelationshipVerification.isUserWalletRelationshipValid(
     req.params.userid,
     req.params.walletid,
@@ -92,8 +88,8 @@ module.exports.editwallet = (req, res, newName) => {
 }
 
 module.exports.deletewallet = (req, res) => {
-  const isWalletValidResponse = isWalletValid(req.params.walletid);
-  const hasWalletCardsResponse = hasWalletCards(req.params.userid, req.params.walletid);
+  const isWalletValidResponse = WalletVerification.isWalletValid(req.params.walletid);
+  const hasWalletCardsResponse = WalletVerification.hasWalletCards(req.params.userid, req.params.walletid);
 
   isWalletValidResponse.then(console.log).catch(console.log);
   hasWalletCardsResponse.then(console.log).catch(console.log);
@@ -129,7 +125,7 @@ module.exports.deletewallet = (req, res) => {
 }
 
 module.exports.getlimit = (req, res) => {
-  const isWalletValidResponse = isWalletValid(req.params.walletid);
+  const isWalletValidResponse = WalletVerification.isWalletValid(req.params.walletid);
 
   Promise
     .all([isWalletValidResponse])
@@ -162,7 +158,7 @@ module.exports.getlimit = (req, res) => {
 }
 
 module.exports.editlimit = (req, res, newLimit) => {
-  const isWalletValidResponse = isWalletValid(req.params.walletid);
+  const isWalletValidResponse = WalletVerification.isWalletValid(req.params.walletid);
 
   Promise
     .all([isWalletValidResponse])
