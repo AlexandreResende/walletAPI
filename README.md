@@ -2,8 +2,14 @@
 
 ## wallet api for managing credit cards
 
-**Endpoint:** 
+## Technologies:
+1. Node.js
+2. Postgresql
+3. Sequelize CLI - ORM
+4. Heroku
 
+**Endpoint:** 
+Marshmello
   > `user`: <br />
   >>`/users` <br />
   **Description: Sign up a user** <br />
