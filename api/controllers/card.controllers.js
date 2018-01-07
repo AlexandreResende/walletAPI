@@ -25,7 +25,8 @@ module.exports.addcard = (req, res) => {
       cardModel.addcard(req, res, req.body);
     })
     .catch((err) => {
-      res.status(500).send({ error: err.details[0].message });
+      console.log(err);
+      res.status(500).send({ error: err });
     });
 };
 

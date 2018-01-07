@@ -171,9 +171,9 @@ class Card {
     const newLimit = req.body.limit;
     const isCardRegistered = CardVerification.isCardValid(req.params.cardid);
     const isEntitiesRelationshipValid = RelationshipVerification.isWalletCardRelationshipValid(
+      req.params.userid,
+      req.params.walletid,
       req.params.cardid,
-      req.params.walletId,
-      req.params.cardId,
     );
     
     Promise
@@ -187,7 +187,7 @@ class Card {
           .then((editLimitResult) => {
             const oldLimit = editLimitResult.dataValues.limit;
             //editLimitResult is an Instance (row) of the table ""cards""
-            //do not forget to SAve after changing ans instance
+            //do not forget to Save after changing ans instance
             editLimitResult.set('limit', newLimit).save();
             models.wallet.findOne({
               where: {
@@ -212,4 +212,4 @@ class Card {
   }
 }
 
-module.exports = () => new Card();
+module.exports = Card;
