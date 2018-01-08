@@ -13,17 +13,12 @@ module.exports.getwallets = (req, res) => {
     },
   })
     .then((result) => {
-      res.status(200).json({ result });
+      res.status(200).json({ message: result });
     })
-    .catch((err) => {
-      res.status(500).json(
-        {
-          message: 'An error occurred when trying to retrieve wallets',
-          error: err,
-        },
-      );
+    .catch(() => {
+      res.status(500).json({ error: 'An error occurred with getwallets' });
     });
-}
+};
 
 module.exports.addwallet = (req, res, walletInfo) => {
   models.wallet.create({
@@ -34,17 +29,12 @@ module.exports.addwallet = (req, res, walletInfo) => {
     userid: req.params.userid,
   })
     .then((result) => {
-      res.status(200).json({ result });
+      res.status(200).json({ message: result });
     })
-    .catch((err) => {
-      res.status(500).json(
-        {
-          message: 'An error occurred when adding a wallet',
-          error: err,
-        },
-      );
+    .catch(() => {
+      res.status(500).json({ error: 'An error occurred with addwallet' });
     });
-}
+};
 
 module.exports.editwallet = (req, res, newName) => {
   const isWalletValidResponse = WalletVerification.isWalletValid(req.params.walletid);
@@ -66,33 +56,23 @@ module.exports.editwallet = (req, res, newName) => {
         selector,
       )
         .then(() => {
-          res.status(200).send({message: 'Wallet information updated' });
+          res.status(200).send({ message: 'Wallet information updated' });
         })
-        .catch((err) => {
-          res.status(500).json(
-            {
-              message: 'An error occurred when updating the wallet',
-              error: err,
-            },
-          );
+        .catch(() => {
+          res.status(500).json({ error: 'An error occurred when updating the wallet' });
         });
     })
-    .catch((err) => {
-      res.status(500).json(
-        {
-          message: 'An error occured in edit wallet',
-          error: err,
-        },
-      );
+    .catch(() => {
+      res.status(500).json({ error: 'An error occured with editwallet' });
     });
-}
+};
 
 module.exports.deletewallet = (req, res) => {
   const isWalletValidResponse = WalletVerification.isWalletValid(req.params.walletid);
-  const hasWalletCardsResponse = WalletVerification.hasWalletCards(req.params.userid, req.params.walletid);
-
-  isWalletValidResponse.then(console.log).catch(console.log);
-  hasWalletCardsResponse.then(console.log).catch(console.log);
+  const hasWalletCardsResponse = WalletVerification.hasWalletCards(
+    req.params.userid,
+    req.params.walletid,
+  );
 
   Promise
     .all([isWalletValidResponse, hasWalletCardsResponse])
@@ -105,24 +85,14 @@ module.exports.deletewallet = (req, res) => {
         .then(() => {
           res.status(200).send({ message: 'Wallet deleted' });
         })
-        .catch((err) => {
-          res.status(500).json(
-            {
-              message: 'An error occurred when deleting a wallet',
-              error: err,
-            },
-          );
+        .catch(() => {
+          res.status(500).json({ error: 'An error occurred when deleting a wallet' });
         });
     })
-    .catch((err) => {
-      res.status(500).send(
-        {
-          message: 'An error occurred on delete wallet',
-          error: err,
-        },
-      );
+    .catch(() => {
+      res.status(500).send({ error: 'An error occurred with deletewallet' });
     });
-}
+};
 
 module.exports.getlimit = (req, res) => {
   const isWalletValidResponse = WalletVerification.isWalletValid(req.params.walletid);
@@ -138,24 +108,14 @@ module.exports.getlimit = (req, res) => {
         .then((result) => {
           res.status(200).json({ limit: result.dataValues.limit });
         })
-        .catch((err) => {
-          res.status(500).send(
-            {
-              message: 'An error occurred when retrieving the limit of the wallet',
-              error: err,
-            },
-          );
+        .catch(() => {
+          res.status(500).send({ error: 'An error occurred when retrieving the limit of the wallet' });
         });
     })
-    .catch((err) => {
-      res.status(500).send(
-        {
-          message: 'An error occurred when getting the limit of the wallet',
-          error: err,
-        },
-      );
+    .catch(() => {
+      res.status(500).send({ error: 'An error occurred with getlimit' });
     });
-}
+};
 
 module.exports.editlimit = (req, res, newLimit) => {
   const isWalletValidResponse = WalletVerification.isWalletValid(req.params.walletid);
@@ -182,31 +142,16 @@ module.exports.editlimit = (req, res, newLimit) => {
               .then(() => {
                 res.status(200).send({ message: 'Limit information updated' });
               })
-              .catch((err) => {
-                res.status(500).send(
-                  {
-                    message: 'An error occurred when updating the wallet limit',
-                    error: err,
-                  },
-                );
+              .catch(() => {
+                res.status(500).send({ error: 'An error occurred when updating the wallet limit' });
               });
           }
         })
-        .catch((err) => {
-          res.status(500).send(
-            {
-              message: 'An error occurred when getting wallet for up dating its limit',
-              error: err,
-            },
-          );
+        .catch(() => {
+          res.status(500).send({ error: 'An error occurred when getting the wallet in editlimit' });
         });
     })
-    .catch((err) => {
-      res.status(500).send(
-        {
-          message: 'An error occurred when editing the limit of the wallet',
-          error: err,
-        },
-      );
+    .catch(() => {
+      res.status(500).send({ error: 'An error occurred with editlimit' });
     });
-}
+};

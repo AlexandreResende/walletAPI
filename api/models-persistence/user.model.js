@@ -15,21 +15,19 @@ module.exports.signupUser = (req, res, userInputData) => {
         password: userInputData.password,
       })
         .then((userCreated) => {
-          res.status(201).send(
-            {
-              message: 'User signed up successfully',
-              userId: userCreated.dataValues.id,
-            },
-          );
+          res.status(201).send({
+            message: 'User signed up successfully',
+            userId: userCreated.dataValues.id,
+          });
         })
-        .catch((err) => {
-          res.status(500).send({ err });
+        .catch(() => {
+          res.status(500).send({ error: 'An error occurred when creating a user' });
         });
     })
-    .catch((err) => {
-      res.status(500).send({ err });
+    .catch(() => {
+      res.status(500).send({ error: 'An error occurred with signupUser' });
     });
-}
+};
 
 module.exports.authentication = (req, res, userToAuthenticate) => {
   models.user.find({
@@ -40,18 +38,16 @@ module.exports.authentication = (req, res, userToAuthenticate) => {
   })
     .then((authenticationResult) => {
       if (authenticationResult) {
-        res.status(200).send(
-          {
-            message: 'User data is valid. User authenticated',
-            userId: authenticationResult.dataValues.id,
-          },
-        );
+        res.status(200).send({
+          message: 'User data is valid. User authenticated',
+          userId: authenticationResult.dataValues.id,
+        });
       } else {
-        res.status(500).send({ err: 'Something went wrong with that authentication' });
+        res.status(500).send({ error: 'An error occurred when authenticating the user' });
       }
     })
-    .catch((err) => {
-      res.status(500).send({ err });
+    .catch(() => {
+      res.status(500).send({ error: 'An error occurred with authenticating' });
     });
 };
 
@@ -67,20 +63,20 @@ module.exports.editUser = (req, res, userUpdateInfo) => {
         },
       };
       models.user.update(
-        userUpdateInfo, 
+        userUpdateInfo,
         selector,
       )
         .then(() => {
           res.status(200).send({ message: 'User information updated' });
         })
-        .catch((err) => {
-          res.status(500).send({ err });
+        .catch(() => {
+          res.status(500).send({ error: 'An error occurred when editing a user' });
         });
     })
-    .catch((err) => {
-      res.status(500).send({ err });
+    .catch(() => {
+      res.status(500).send({ error: 'An error occurred with editUser' });
     });
-}
+};
 
 module.exports.deleteUser = (req, res) => {
   const isUserRegistered = UserVerification.isUserValid(req.params.userid);
@@ -97,11 +93,11 @@ module.exports.deleteUser = (req, res) => {
         .then(() => {
           res.status(200).send({ message: 'User deleted successfully' });
         })
-        .catch((err) => {
-          res.status(500).send({ err });
+        .catch(() => {
+          res.status(500).send({ error: 'An error occured when deleting a user' });
         });
     })
-    .catch((err) => {
-      res.status(500).send({ err });
+    .catch(() => {
+      res.status(500).send({ error: 'An error occurred with deleteUser' });
     });
-}
+};
