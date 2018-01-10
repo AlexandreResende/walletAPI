@@ -1,12 +1,7 @@
 
 const Joi = require('joi');
 
-const {
-  signupUser,
-  authentication,
-  editUser,
-  deleteUser,
-} = require('../models-persistence/user.model');
+const User = require('../models-persistence/user.model');
 
 module.exports.signup = (req, res) => {
   const signupSchema = {
@@ -19,7 +14,7 @@ module.exports.signup = (req, res) => {
   Promise
     .all([signupValidation])
     .then(() => {
-      signupUser(req, res, req.body);
+      User.signupUser(req, res, req.body);
     })
     .catch((err) => {
       res.status(500).send({
@@ -38,7 +33,7 @@ module.exports.authentication = (req, res) => {
   Joi
     .validate(req.body, authenticationSchema)
     .then(() => {
-      authentication(req, res, req.body);
+      User.authentication(req, res, req.body);
     })
     .catch((err) => {
       res.status(500).send({
@@ -57,7 +52,7 @@ module.exports.edituser = (req, res) => {
   Joi
     .validate(req.body, editUserSchema)
     .then(() => {
-      editUser(req, res, req.body);
+      User.editUser(req, res, req.body);
     })
     .catch((err) => {
       res.status(500).send({
@@ -67,5 +62,5 @@ module.exports.edituser = (req, res) => {
 }
 
 module.exports.deleteuser = (req, res) => {
-  deleteUser(req, res);
+  User.deleteUser(req, res);
 }
