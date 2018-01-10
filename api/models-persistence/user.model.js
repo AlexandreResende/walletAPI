@@ -1,4 +1,3 @@
-
 const models = require('../models');
 
 const UserVerification = require('../helper/UserVerification');
@@ -16,21 +15,19 @@ class User {
           password: userInputData.password,
         })
           .then((userCreated) => {
-            res.status(201).send(
-              {
-                message: 'User signed up successfully',
-                userId: userCreated.dataValues.id,
-              },
-            );
+            res.status(201).send({
+              message: 'User signed up successfully',
+              userId: userCreated.dataValues.id,
+            });
           })
-          .catch((err) => {
-            res.status(500).send({ err });
+          .catch(() => {
+            res.status(500).send({ error: 'An error occurred when creating a user' });
           });
       })
-      .catch((err) => {
-        res.status(500).send({ err });
+      .catch(() => {
+        res.status(500).send({ error: 'An error occurred with signupUser' });
       });
-  }
+  };
 
   static authentication(req, res, userToAuthenticate) {
     models.user.find({
@@ -41,18 +38,16 @@ class User {
     })
       .then((authenticationResult) => {
         if (authenticationResult) {
-          res.status(200).send(
-            {
-              message: 'User data is valid. User authenticated',
-              userId: authenticationResult.dataValues.id,
-            },
-          );
+          res.status(200).send({
+            message: 'User data is valid. User authenticated',
+            userId: authenticationResult.dataValues.id,
+          });
         } else {
-          res.status(500).send({ err: 'Something went wrong with that authentication' });
+          res.status(500).send({ error: 'An error occurred when authenticating the user' });
         }
       })
-      .catch((err) => {
-        res.status(500).send({ err });
+      .catch(() => {
+        res.status(500).send({ error: 'An error occurred with authenticating' });
       });
   };
 
@@ -68,20 +63,20 @@ class User {
           },
         };
         models.user.update(
-          userUpdateInfo, 
+          userUpdateInfo,
           selector,
         )
           .then(() => {
             res.status(200).send({ message: 'User information updated' });
           })
-          .catch((err) => {
-            res.status(500).send({ err });
+          .catch(() => {
+            res.status(500).send({ error: 'An error occurred when editing a user' });
           });
       })
-      .catch((err) => {
-        res.status(500).send({ err });
+      .catch(() => {
+        res.status(500).send({ error: 'An error occurred with editUser' });
       });
-  }
+  };
 
   static deleteUser(req, res) {
     const isUserRegistered = UserVerification.isUserValid(req.params.userid);
@@ -98,14 +93,14 @@ class User {
           .then(() => {
             res.status(200).send({ message: 'User deleted successfully' });
           })
-          .catch((err) => {
-            res.status(500).send({ err });
+          .catch(() => {
+            res.status(500).send({ error: 'An error occured when deleting a user' });
           });
       })
-      .catch((err) => {
-        res.status(500).send({ err });
+      .catch(() => {
+        res.status(500).send({ error: 'An error occurred with deleteUser' });
       });
-  }
+  };
 }
 
 module.exports = User;

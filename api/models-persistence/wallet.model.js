@@ -103,27 +103,14 @@ class Wallet {
             id: req.params.walletid,
           },
         })
-          .then(() => {
-            res.status(200).send({ message: 'Wallet deleted' });
-          })
-          .catch((err) => {
-            res.status(500).json(
-              {
-                message: 'An error occurred when deleting a wallet',
-                error: err,
-              },
-            );
+          .catch(() => {
+            res.status(500).json({ error: 'An error occurred when deleting a wallet' });
           });
       })
-      .catch((err) => {
-        res.status(500).send(
-          {
-            message: 'An error occurred on delete wallet',
-            error: err,
-          },
-        );
+      .catch(() => {
+        res.status(500).send({ error: 'An error occurred with deletewallet' });
       });
-  }
+  };
 
   static getlimit(req, res) {
     const isWalletValidResponse = WalletVerification.isWalletValid(req.params.walletid);
@@ -136,27 +123,14 @@ class Wallet {
             id: req.params.walletid,
           },
         })
-          .then((result) => {
-            res.status(200).json({ limit: result.dataValues.limit });
-          })
-          .catch((err) => {
-            res.status(500).send(
-              {
-                message: 'An error occurred when retrieving the limit of the wallet',
-                error: err,
-              },
-            );
+          .catch(() => {
+            res.status(500).send({ error: 'An error occurred when retrieving the limit of the wallet' });
           });
       })
-      .catch((err) => {
-        res.status(500).send(
-          {
-            message: 'An error occurred when getting the limit of the wallet',
-            error: err,
-          },
-        );
+      .catch(() => {
+        res.status(500).send({ error: 'An error occurred with getlimit' });
       });
-  }
+  };
 
   static editlimit(req, res, newLimit) {
     const isWalletValidResponse = WalletVerification.isWalletValid(req.params.walletid);
@@ -183,34 +157,19 @@ class Wallet {
                 .then(() => {
                   res.status(200).send({ message: 'Limit information updated' });
                 })
-                .catch((err) => {
-                  res.status(500).send(
-                    {
-                      message: 'An error occurred when updating the wallet limit',
-                      error: err,
-                    },
-                  );
+                .catch(() => {
+                  res.status(500).send({ error: 'An error occurred when updating the wallet limit' });
                 });
             }
           })
-          .catch((err) => {
-            res.status(500).send(
-              {
-                message: 'An error occurred when getting wallet for up dating its limit',
-                error: err,
-              },
-            );
+          .catch(() => {
+            res.status(500).send({ error: 'An error occurred when getting the wallet in editlimit' });
           });
       })
-      .catch((err) => {
-        res.status(500).send(
-          {
-            message: 'An error occurred when editing the limit of the wallet',
-            error: err,
-          },
-        );
+      .catch(() => {
+        res.status(500).send({ error: 'An error occurred with editlimit' });
       });
-  }
+  };
 }
 
-model.exports = Wallet;
+module.exports = Wallet;

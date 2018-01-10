@@ -17,7 +17,7 @@ class Card {
       })
       .catch((err) => {
         console.log(err);
-        res.status(500).send({ err });
+        res.status(500).send({ error: 'An error occurred with getcards' });
       });
   }
 
@@ -44,20 +44,20 @@ class Card {
                 id: req.params.walletid,
               },
             })
-              .then((result) => {
+              .then(() => {
                 result.increment(['maxlimit'], { by: cardInfo.limit });
                 res.status(200).send({ resultCard });
               })
-              .catch((err) => {
-                res.status(500).send({ err });
+              .catch(() => {
+                res.status(500).send({ error: 'An error occurred when finding the wallet to update its maxlimit' });
               });
           })
-          .catch((err) => {
-            res.status(500).send({ error: 'An error occurred' });
+          .catch(() => {
+            res.status(500).send({ error: 'An error occurred when creating the card' });
           });
       })
-      .catch((err) => {
-        res.status(500).send({ err });
+      .catch(() => {
+        res.status(500).send({ error: 'An error occurred with addcard' });
       });
   }
 
@@ -66,7 +66,7 @@ class Card {
 
     Promise
       .all([isCardRegistered])
-      .then((result) => {
+      .then(() => {
         models.cards.update(
           newCardInfo,
           {
@@ -75,16 +75,15 @@ class Card {
             },
           },
         )
-          .then((result) => {
-            console.log(result.dataValues);
+          .then(() => {
             res.status(200).send({ message: 'Card edited successfully' });
           })
-          .catch((err) => {
-            res.status(500).send({ error: 'An error occurred' });
+          .catch(() => {
+            res.status(500).send({ error: 'An error occurred when updating the card' });
           });
       })
-      .catch((err) => {
-        res.status(500).send({ err });
+      .catch(() => {
+        res.status(500).send({ error: 'An error occurred with editcard' });
       });
   }
 
@@ -93,21 +92,21 @@ class Card {
 
     Promise
       .all([isCardRegistered])
-      .then((result) => {
+      .then(() => {
         models.cards.destroy({
           where: {
             id: req.params.cardid,
           },
         })
-          .then((result) => {
+          .then(() => {
             res.status(200).send({ message: 'Card deleted successfully' });
           })
-          .catch((err) => {
-            res.status(500).send({ err });
+          .catch(() => {
+            res.status(500).send({ error: 'An error occurred when deleting the card' });
           });
       })
-      .catch((err) => {
-        res.status(500).send({ err });
+      .catch(() => {
+        res.status(500).send({ error: 'An error occurred with deletecard' });
       });
   }
 
@@ -126,10 +125,10 @@ class Card {
           reject(err);
         });
     });
-    
+
     Promise
       .all([isCardRegistered, oldPurchasedValue])
-      .then((result) => {
+      .then(() => {
         models.cards.update(
           {
             purchased: 0,
@@ -147,23 +146,20 @@ class Card {
                 id: req.params.walletid,
               },
             })
-              .then((result) => {
+              .then(() => {
                 result.decrement(['totalpurchased'], { by: oldPurchased });
                 res.status(200).send({ message: 'Credit released successfully' });
               })
-              .catch((err) => {
-                console.log(err);
-                res.status(500).send({ err });
+              .catch(() => {
+                res.status(500).send({ error: 'An error occurred when finding a wallet to update its total purchased' });
               });
           })
-          .catch((err) => {
-            console.log(err);
-            res.status(500).send({ err });
+          .catch(() => {
+            res.status(500).send({ error: 'An error occurred when updating the purchase in releasecredit' });
           });
       })
-      .catch((err) => {
-        console.log(err);
-        res.status(500).send({ err });
+      .catch(() => {
+        res.status(500).send({ error: 'An error occurred with releasecredit' });
       });
   }
 
@@ -175,10 +171,10 @@ class Card {
       req.params.walletid,
       req.params.cardid,
     );
-    
+
     Promise
       .all([isCardRegistered, isEntitiesRelationshipValid])
-      .then((promisesResult) => {
+      .then(() => {
         models.cards.findOne({
           where: {
             id: req.params.cardid,
@@ -198,16 +194,16 @@ class Card {
                 walletResult.increment(['maxlimit'], { by: newLimit - oldLimit });
                 res.status(200).send({ message: 'Limit of the card updated successfully' });
               })
-              .catch((err) => {
-                res.status(500).send({ err });
+              .catch(() => {
+                res.status(500).send({ error: 'An error occurred when finding a wallet to edit its maxlimit in editlimit' });
               });
           })
-          .catch((err) => {
-            res.status(500).send({ err });
+          .catch(() => {
+            res.status(500).send({ error: 'An error occurred when finding a card in editlimit' });
           });
       })
-      .catch((err) => {
-        res.status(500).send({ err });
+      .catch(() => {
+        res.status(500).send({ error: 'An error occurred with editlimit' });
       });
   }
 }
