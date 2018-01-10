@@ -1,17 +1,10 @@
 
 const Joi = require('joi');
 
-const {
-  getwallets,
-  addwallet,
-  editwallet,
-  deletewallet,
-  getlimit,
-  editlimit,
-} = require('../models-persistence/wallet.model');
+const Wallet = require('../models-persistence/wallet.model');
 
 module.exports.getwallets = (req, res) => {
-  getwallets(req, res);
+  Wallet.getwallets(req, res);
 };
 
 module.exports.addwallet = (req, res) => {
@@ -24,7 +17,7 @@ module.exports.addwallet = (req, res) => {
   Promise
     .all([walletValidation])
     .then(() => {
-      addwallet(req, res, req.body);
+      Wallet.addwallet(req, res, req.body);
     })
     .catch((err) => {
       res.status(500).send({ error: err.details[0].message });
@@ -41,7 +34,7 @@ module.exports.editwallet = (req, res) => {
   Promise
     .all([walletValidation])
     .then(() => {
-      editwallet(req, res, req.body);
+      Wallet.editwallet(req, res, req.body);
     })
     .catch((err) => {
       console.log(err);
@@ -50,11 +43,11 @@ module.exports.editwallet = (req, res) => {
 };
 
 module.exports.deletewallet = (req, res) => {
-  deletewallet(req, res);
+  Wallet.deletewallet(req, res);
 };
 
 module.exports.getlimit = (req, res) => {
-  getlimit(req, res);
+  Wallet.getlimit(req, res);
 };
 
 module.exports.editlimit = (req, res) => {
@@ -67,7 +60,7 @@ module.exports.editlimit = (req, res) => {
   Promise
     .all([walletValidation])
     .then(() => {
-      editlimit(req, res, req.body);
+      Wallet.editlimit(req, res, req.body);
     })
     .catch((err) => {
       console.log(err);
