@@ -5,7 +5,14 @@
   "main": "index.js",
   "scripts": {
     "start": "node app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha",
+    "test:coverage": "nyc npm test"
+  },
+  "nyc": {
+    "reporter": ["text", "html"],
+    "include": ["api/**/*.js"],
+    "exclude": ["test/**", "**.json", "api/migrations/**"],
+    "all": true
   },
   "repository": {
     "type": "git",
@@ -36,6 +43,7 @@
     "eslint-config-airbnb-base": "^12.1.0",
     "eslint-plugin-import": "^2.8.0",
     "mocha": "^4.0.1",
-    "mysql2": "^1.4.2"
+    "mysql2": "^1.4.2",
+    "nyc": "^11.4.1"
   }
 }
