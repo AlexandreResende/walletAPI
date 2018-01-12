@@ -18,8 +18,7 @@ module.exports.signup = (req, res) => {
     })
     .catch((err) => {
       res.status(500).send({
-        message: 'An error occurred in the signup',
-        error: err,
+        error: 'An error occurred with signup controller in user',
       });
     });
 }
@@ -35,10 +34,10 @@ module.exports.authentication = (req, res) => {
     .then(() => {
       User.authentication(req, res, req.body);
     })
-    .catch((err) => {
+    .catch(() => {
       res.status(500).send({
-        message: 'An error occurred in the authentication',
-        error: err.details[0].message });
+        error: 'An error occurred with authentication controller in user',
+      });
     });
 }
 
@@ -54,10 +53,10 @@ module.exports.edituser = (req, res) => {
     .then(() => {
       User.editUser(req, res, req.body);
     })
-    .catch((err) => {
+    .catch(() => {
       res.status(500).send({
-        message: 'An error occurred when editing the data of the user',
-        error: err.details[0].message });
+        error: 'An error occurred with edituser controller in user',
+      });
     });
 }
 

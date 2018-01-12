@@ -26,7 +26,9 @@ module.exports.addcard = (req, res) => {
     })
     .catch((err) => {
       console.log(err);
-      res.status(500).send({ error: err });
+      res.status(500).send({
+        error: 'An error occurred with addcard in card controller'
+      });
     });
 };
 
@@ -48,7 +50,9 @@ module.exports.editcard = (req, res) => {
       cardModel.editcard(req, res, req.body);
     })
     .catch((err) => {
-      res.status(500).send({ err });
+      res.status(500).send({
+        error: 'An error occurred with editcard in card controller',
+      });
     });
 };
 
