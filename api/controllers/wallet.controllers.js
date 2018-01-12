@@ -20,7 +20,9 @@ module.exports.addwallet = (req, res) => {
       Wallet.addwallet(req, res, req.body);
     })
     .catch((err) => {
-      res.status(500).send({ error: err.details[0].message });
+      res.status(500).send({
+        error: 'An error occurred with addwallet in wallet controller',
+      });
     });
 };
 
@@ -37,8 +39,9 @@ module.exports.editwallet = (req, res) => {
       Wallet.editwallet(req, res, req.body);
     })
     .catch((err) => {
-      console.log(err);
-      res.status(500).send({ error: err });
+      res.status(500).send({
+        error: 'An error occurred with editwallet in wallet controller',
+      });
     });
 };
 
@@ -63,7 +66,8 @@ module.exports.editlimit = (req, res) => {
       Wallet.editlimit(req, res, req.body);
     })
     .catch((err) => {
-      console.log(err);
-      res.status(500).send({ error: err.details[0].message });
+      res.status(500).send({
+        error: 'An error occurred with editlimit in wallet controller',
+      });
     });
 };
