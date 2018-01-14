@@ -1,18 +1,11 @@
-module.exports = (arrayOfCards) => {
-  let orderedArray;
 
-  orderedArray = arrayOfCards.sort( (firstValue, secondValue) => {
-    if (firstValue.duedate > secondValue.duedate){
-      return firstValue.duedate - secondValue.duedate;
-    } else if (firstValue.duedate == secondValue.duedate) {
-      if (firstValue.limit < secondValue.limit) {
-        return firstValue.limit - secondValue.limit;
-      } else {
-        return secondValue.limit - firstValue.limit;
-      }
-    } else {
-      return secondValue.duedate - firstValue.duedate;
-    }
-  });
-  return orderedArray;
+const paymentRule = require('./paymentRule');
+
+const sortingCards = (arrayOfCards, date) => {
+  const beforeDate = paymentRule(arrayOfCards.filter(el => el.duedate <= date));
+  const afterDate = paymentRule(arrayOfCards.filter(el => el.duedate > date));
+
+  return beforeDate.concat(afterDate);
 }
+
+module.exports = sortingCards;
