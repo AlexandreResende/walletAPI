@@ -11,7 +11,7 @@
   "nyc": {
     "reporter": ["text", "html"],
     "include": ["api/**/*.js"],
-    "exclude": ["test/**", "**.json", "api/migrations/**"],
+    "exclude": ["api/migrations/**", "api/models/**"],
     "all": true
   },
   "repository": {
