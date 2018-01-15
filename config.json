@@ -1,8 +1,8 @@
 {
   "development": {
-    "database": "postgres",
-    "username": "postgres",
-    "password": "postgres",
+    "database": "postgrestest",
+    "username": "postgrestest",
+    "password": "postgrestest",
     "dialect": "postgresql",
     "logging": false
   },
